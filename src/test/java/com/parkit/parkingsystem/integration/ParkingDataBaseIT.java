@@ -120,7 +120,7 @@ public class ParkingDataBaseIT {
 
 		// the outTime must be filled by processExitingVehicle (not null)
 		assertThat(ticket.getOutTime()).isNotNull();
-		// The fare calculated twice must be equals
+		// The results of calculated fare must be equals
 		assertThat(ticket.getPrice()).isEqualTo(checkFare);
 
 	}

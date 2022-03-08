@@ -3,20 +3,13 @@ package com.parkit.parkingsystem.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.parkit.parkingsystem.dao.ParkingSpotDAO;
-import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
 public class InteractiveShell {
 
 	private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
-	public static InputReaderUtil inputReaderUtil = new InputReaderUtil();
-	static ParkingSpotDAO parkingSpotDAO = new ParkingSpotDAO();
-	static TicketDAO ticketDAO = new TicketDAO();
-	public static ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-
-	public static void loadInterface() {
+	public static void loadInterface(InputReaderUtil inputReaderUtil, ParkingService parkingService) {
 		logger.info("App initialized!!!");
 		System.out.println("Welcome to Parking System!");
 

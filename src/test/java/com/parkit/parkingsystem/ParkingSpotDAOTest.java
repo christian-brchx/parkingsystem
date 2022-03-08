@@ -89,7 +89,7 @@ public class ParkingSpotDAOTest {
 			// La recherche doit cibler un emplacement pour une voiture ("CAR")
 			verify(ps, Mockito.times(1)).setString(1, "CAR");
 			verify(ps, Mockito.times(1)).executeQuery();
-			// Le numéro d'emplacement doit être à -1
+			// Le numéro d'emplacement doit être à -1 car pas d'emplacement libre
 			assertThat(result).isEqualTo(-1);
 
 		} catch (
@@ -103,6 +103,7 @@ public class ParkingSpotDAOTest {
 	public void updateParkingMustExecuteTheRequestWithRightsArguments() {
 		try {
 			// GIVEN
+			// L'emplacement à mettre à jour est le numéro 4 et n'est pas disponible
 			when(parkingSpot.getId()).thenReturn(4);
 			when(parkingSpot.isAvailable()).thenReturn(false);
 			// on indique qu'une ligne a été mise à jour
@@ -115,10 +116,10 @@ public class ParkingSpotDAOTest {
 			boolean result = parkingSpotDAO.updateParking(parkingSpot);
 
 			// THEN
-			// La recherche doit cibler un emplacement pour une voiture ("CAR")
+			// La mise à jour doit cibler l'emplacement numéro 4 qui n'est pas disponible
 			verify(ps, Mockito.times(1)).setBoolean(1, false);
 			verify(ps, Mockito.times(1)).setInt(2, 4);
-			// Le traitement s'est bien déroulé
+			// Le traitement doit bien se dérouler
 			assertThat(result).isEqualTo(true);
 
 		} catch (

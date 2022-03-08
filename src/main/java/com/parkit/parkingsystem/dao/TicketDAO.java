@@ -22,9 +22,11 @@ public class TicketDAO {
 
 	public boolean saveTicket(Ticket ticket) {
 		Connection con = null;
+		PreparedStatement ps = null;
+		boolean ret = false;
 		try {
 			con = dataBaseConfig.getConnection();
-			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
+			ps = con.prepareStatement(DBConstants.SAVE_TICKET);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 			// ps.setInt(1,ticket.getId());
 			ps.setInt(1, ticket.getParkingSpot().getId());
@@ -33,25 +35,30 @@ public class TicketDAO {
 			ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
 			ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
 			ps.setInt(6, ticket.getCountPreviousTickets());
-			return ps.execute();
+			ret = ps.execute();
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
-			dataBaseConfig.closeConnection(con);
+			if (ps != null)
+				dataBaseConfig.closePreparedStatement(ps);
+			if (con != null)
+				dataBaseConfig.closeConnection(con);
 		}
-		return false;
+		return ret;
 	}
 
 	public Ticket getTicket(String vehicleRegNumber) {
 		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		Ticket ticket = null;
 		try {
 			con = dataBaseConfig.getConnection();
-			PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);
+			ps = con.prepareStatement(DBConstants.GET_TICKET);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME,
 			// COUNT_PREVIOUS_TICKETS)
 			ps.setString(1, vehicleRegNumber);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			if (rs.next()) {
 				ticket = new Ticket();
 				ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(7)), false);
@@ -63,51 +70,67 @@ public class TicketDAO {
 				ticket.setOutTime(rs.getTimestamp(5));
 				ticket.setCountPreviousTickets(rs.getInt(6));
 			}
-			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closePreparedStatement(ps);
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
-			dataBaseConfig.closeConnection(con);
+			if (rs != null)
+				dataBaseConfig.closeResultSet(rs);
+			if (ps != null)
+				dataBaseConfig.closePreparedStatement(ps);
+			if (con != null)
+				dataBaseConfig.closeConnection(con);
 		}
 		return ticket;
 	}
 
 	public boolean updateTicket(Ticket ticket) {
 		Connection con = null;
+		PreparedStatement ps = null;
+		boolean ret = false;
 		try {
 			con = dataBaseConfig.getConnection();
-			PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
+			ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
 			ps.setDouble(1, ticket.getPrice());
 			ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
 			ps.setInt(3, ticket.getId());
 			ps.execute();
-			return true;
+			ret = true;
 		} catch (Exception ex) {
 			logger.error("Error saving ticket info", ex);
 		} finally {
-			dataBaseConfig.closeConnection(con);
+			if (ps != null)
+				dataBaseConfig.closePreparedStatement(ps);
+			if (con != null)
+				dataBaseConfig.closeConnection(con);
 		}
-		return false;
+		return ret;
 	}
 
 	// STORY#2 RECURRENT USER
 	public int countPreviousTicketsOfVehicleRegNumber(String vehicleRegNumber) {
 		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		int count = 0;
 		try {
 			con = dataBaseConfig.getConnection();
-			PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET_FOR_USER);
+			ps = con.prepareStatement(DBConstants.COUNT_TICKET_FOR_USER);
 			ps.setString(1, vehicleRegNumber);
-			ResultSet rs = ps.executeQuery();
-
+			rs = ps.executeQuery();
 			if (rs.next()) {
-				return rs.getInt(1);
+				count = rs.getInt(1);
 			}
+			rs.close();
 		} catch (Exception ex) {
 			logger.error("Error counting ticket of vehicleRegNumber : ", vehicleRegNumber, " Exception = ", ex);
 		} finally {
-			dataBaseConfig.closeConnection(con);
+			if (rs != null)
+				dataBaseConfig.closeResultSet(rs);
+			if (ps != null)
+				dataBaseConfig.closePreparedStatement(ps);
+			if (con != null)
+				dataBaseConfig.closeConnection(con);
 		}
-		return 0;
+		return count;
 	}
 }

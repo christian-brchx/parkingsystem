@@ -32,7 +32,6 @@ public class FareCalculatorService {
 		// int outHour = ticket.getOutTime().getHours();
 		long inHour = ticket.getInTime().getTime();
 		long outHour = ticket.getOutTime().getTime();
-
 		// TODO: Some tests are failing here. Need to check if this logic is correct
 		// calcul de la durée en ms et conversion en h
 		// utilisation d'un double pour conserver les décimales

@@ -5,8 +5,12 @@ import org.apache.logging.log4j.Logger;
 
 public class InputReaderUtil {
 
-	public static ScannerUtil scanUtil = new ScannerUtil();
+	private ScannerUtil scanUtil;
 	private static final Logger logger = LogManager.getLogger("InputReaderUtil");
+
+	public InputReaderUtil(ScannerUtil scanUtil) {
+		this.scanUtil = scanUtil;
+	}
 
 	public int readSelection() {
 		try {

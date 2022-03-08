@@ -22,14 +22,13 @@ public class InputReaderUtilTest {
 
 	@BeforeEach
 	private void setUpPerTest() {
-		inputReaderUtil = new InputReaderUtil();
+		inputReaderUtil = new InputReaderUtil(scanUtil);
 	}
 
 	@Test
 	public void ReadSelectionMustReturntheNumberEntered() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("2");
-		InputReaderUtil.scanUtil = scanUtil;
 		// WHEN
 		int numberReturned = inputReaderUtil.readSelection();
 
@@ -42,7 +41,6 @@ public class InputReaderUtilTest {
 	public void readVehicleRegistrationNumberMustReturntheRegistrationNumberEntered() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("ABCDE");
-		InputReaderUtil.scanUtil = scanUtil;
 
 		// WHEN
 		try {
@@ -61,7 +59,6 @@ public class InputReaderUtilTest {
 	public void readVehicleRegistrationNumberMustCatchInvalidEntry() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("");
-		InputReaderUtil.scanUtil = scanUtil;
 
 		// WHEN
 		assertThrows(IllegalArgumentException.class, () -> inputReaderUtil.readVehicleRegistrationNumber());

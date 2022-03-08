@@ -32,11 +32,9 @@ public class InteractiveShellTest {
 		try {
 			// GIVEN
 			when(inputReaderUtil.readSelection()).thenReturn(1, 3);
-			InteractiveShell.inputReaderUtil = inputReaderUtil;
-			InteractiveShell.parkingService = parkingService;
 
 			// WHEN
-			InteractiveShell.loadInterface();
+			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
 			verify(inputReaderUtil, Mockito.times(2)).readSelection();
@@ -53,11 +51,9 @@ public class InteractiveShellTest {
 		try {
 			// GIVEN
 			when(inputReaderUtil.readSelection()).thenReturn(2, 3);
-			InteractiveShell.inputReaderUtil = inputReaderUtil;
-			InteractiveShell.parkingService = parkingService;
 
 			// WHEN
-			InteractiveShell.loadInterface();
+			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
 			verify(inputReaderUtil, Mockito.times(2)).readSelection();
@@ -75,11 +71,9 @@ public class InteractiveShellTest {
 		try {
 			// GIVEN
 			when(inputReaderUtil.readSelection()).thenReturn(3);
-			InteractiveShell.inputReaderUtil = inputReaderUtil;
-			InteractiveShell.parkingService = parkingService;
 
 			// WHEN
-			InteractiveShell.loadInterface();
+			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
 			verify(inputReaderUtil, Mockito.times(1)).readSelection();
