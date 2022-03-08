@@ -69,7 +69,7 @@ public class Ticket {
 	}
 
 	public boolean ofRecurrentUser() {
-		if (countPreviousTickets > 0) {
+		if (getCountPreviousTickets() > 0) {
 			return true;
 		} else
 			return false;
