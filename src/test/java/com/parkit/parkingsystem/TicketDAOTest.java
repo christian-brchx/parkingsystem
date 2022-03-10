@@ -1,7 +1,6 @@
 package com.parkit.parkingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,11 +63,9 @@ public class TicketDAOTest {
 			ticketDAO.saveTicket(ticket);
 
 			// THEN
-			verify(parkingSpot, Mockito.times(1)).getId();
-			verify(ps, Mockito.times(1)).setInt(1, 1);
+			// La sauvegarde doit cibler TEST01 avec la bonne heure d'entrée
 			verify(ps, Mockito.times(1)).setString(2, "TEST01");
 			verify(ps, Mockito.times(1)).setTimestamp(4, new Timestamp(inTime.getTime()));
-			verify(ps, Mockito.times(1)).execute();
 
 		} catch (
 
@@ -94,13 +91,8 @@ public class TicketDAOTest {
 			Ticket ticket = ticketDAO.getTicket("TEST01");
 
 			// THEN
-
+			// La recherche doit cibler TEST01 et retourner TEST01
 			verify(ps, Mockito.times(1)).setString(1, "TEST01");
-			verify(ps, Mockito.times(1)).executeQuery();
-			verify(rs, Mockito.times(3)).getInt(anyInt());
-			verify(rs, Mockito.times(1)).getDouble(anyInt());
-			verify(rs, Mockito.times(2)).getTimestamp(anyInt());
-			verify(rs, Mockito.times(1)).getString(7);
 			assertThat(ticket.getVehicleRegNumber()).isEqualTo("TEST01");
 
 		} catch (Exception e) {

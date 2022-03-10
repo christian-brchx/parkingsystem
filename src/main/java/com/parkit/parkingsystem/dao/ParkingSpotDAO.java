@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ public class ParkingSpotDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		int result = -1;
+		boolean availableSlot = true;
 		try {
 			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
@@ -29,10 +31,15 @@ public class ParkingSpotDAO {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				result = rs.getInt(1);
-				;
+			} else {
+				availableSlot = false;
 			}
-		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+		} catch (SQLException ex) {
+			if (availableSlot) {
+				logger.error("Error fetching next available slot", ex);
+			}
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (rs != null)
 				dataBaseConfig.closeResultSet(rs);
@@ -56,8 +63,10 @@ public class ParkingSpotDAO {
 			ps.setInt(2, parkingSpot.getId());
 			int updateRowCount = ps.executeUpdate();
 			ret = (updateRowCount == 1);
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error updating parking info", ex);
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (ps != null)
 				dataBaseConfig.closePreparedStatement(ps);

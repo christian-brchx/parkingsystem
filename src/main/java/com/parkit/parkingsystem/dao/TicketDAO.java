@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +37,10 @@ public class TicketDAO {
 			ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
 			ps.setInt(6, ticket.getCountPreviousTickets());
 			ret = ps.execute();
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error fetching next available slot", ex);
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (ps != null)
 				dataBaseConfig.closePreparedStatement(ps);
@@ -70,8 +73,10 @@ public class TicketDAO {
 				ticket.setOutTime(rs.getTimestamp(5));
 				ticket.setCountPreviousTickets(rs.getInt(6));
 			}
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error fetching next available slot", ex);
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (rs != null)
 				dataBaseConfig.closeResultSet(rs);
@@ -95,8 +100,10 @@ public class TicketDAO {
 			ps.setInt(3, ticket.getId());
 			ps.execute();
 			ret = true;
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error saving ticket info", ex);
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (ps != null)
 				dataBaseConfig.closePreparedStatement(ps);
@@ -121,8 +128,10 @@ public class TicketDAO {
 				count = rs.getInt(1);
 			}
 			rs.close();
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error counting ticket of vehicleRegNumber : ", vehicleRegNumber, " Exception = ", ex);
+		} catch (ClassNotFoundException ex) {
+			logger.error("Error getConnection Exception = ", ex);
 		} finally {
 			if (rs != null)
 				dataBaseConfig.closeResultSet(rs);

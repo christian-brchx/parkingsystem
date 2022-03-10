@@ -43,11 +43,11 @@ public class ParkingSpotDAOTest {
 	}
 
 	@Test
-	public void getNextAvailableSlotMustReturnTheNumberOfTheCarSPot() {
+	public void getNextAvailableSlotMustReturnTheNumberOfTheAvailableCarSPot() {
 		try {
 			// GIVEN
-			// Le premier emplacement libre porte le numero 4
 			when(rs.next()).thenReturn(true);
+			// first available parkingspot is number 4
 			when(rs.getInt(1)).thenReturn(4);
 			when(ps.executeQuery()).thenReturn(rs);
 			when(con.prepareStatement(anyString())).thenReturn(ps);
@@ -58,15 +58,12 @@ public class ParkingSpotDAOTest {
 			int result = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
 
 			// THEN
-			// La recherche doit cibler un emplacement pour une voiture ("CAR")
+			// check if search for car'spot
 			verify(ps, Mockito.times(1)).setString(1, "CAR");
-			verify(ps, Mockito.times(1)).executeQuery();
-			// Le numéro d'emplacement doit correspondre
+			// check the parkingspot number returned (4 here)
 			assertThat(result).isEqualTo(4);
 
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -75,7 +72,7 @@ public class ParkingSpotDAOTest {
 	public void getNextAvailableSlotMustReturnMoinsUnIfNoFreeCarSpot() {
 		try {
 			// GIVEN
-			// Il n'y a pas d'emplacement libre
+			// no available parkingspot
 			when(rs.next()).thenReturn(false);
 			when(ps.executeQuery()).thenReturn(rs);
 			when(con.prepareStatement(anyString())).thenReturn(ps);
@@ -86,10 +83,9 @@ public class ParkingSpotDAOTest {
 			int result = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
 
 			// THEN
-			// La recherche doit cibler un emplacement pour une voiture ("CAR")
+			// check if search for car'spot
 			verify(ps, Mockito.times(1)).setString(1, "CAR");
-			verify(ps, Mockito.times(1)).executeQuery();
-			// Le numéro d'emplacement doit être à -1 car pas d'emplacement libre
+			// must return -1 when no available parkingspot
 			assertThat(result).isEqualTo(-1);
 
 		} catch (
@@ -103,10 +99,9 @@ public class ParkingSpotDAOTest {
 	public void updateParkingMustExecuteTheRequestWithRightsArguments() {
 		try {
 			// GIVEN
-			// L'emplacement à mettre à jour est le numéro 4 et n'est pas disponible
+			// parkingspot to update is number 4
 			when(parkingSpot.getId()).thenReturn(4);
 			when(parkingSpot.isAvailable()).thenReturn(false);
-			// on indique qu'une ligne a été mise à jour
 			when(ps.executeUpdate()).thenReturn(1);
 			when(con.prepareStatement(anyString())).thenReturn(ps);
 			when(dataBaseConfig.getConnection()).thenReturn(con);
@@ -116,10 +111,10 @@ public class ParkingSpotDAOTest {
 			boolean result = parkingSpotDAO.updateParking(parkingSpot);
 
 			// THEN
-			// La mise à jour doit cibler l'emplacement numéro 4 qui n'est pas disponible
-			verify(ps, Mockito.times(1)).setBoolean(1, false);
+			// the updated parkingspot must be number 4
 			verify(ps, Mockito.times(1)).setInt(2, 4);
-			// Le traitement doit bien se dérouler
+			// the parkingspot must be set to available
+			verify(ps, Mockito.times(1)).setBoolean(1, false);
 			assertThat(result).isEqualTo(true);
 
 		} catch (

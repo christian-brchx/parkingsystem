@@ -38,6 +38,17 @@ public class InputReaderUtilTest {
 	}
 
 	@Test
+	public void ReadSelectionMustCatchInvalidEntry() {
+		// GIVEN
+		when(scanUtil.nextLine()).thenReturn("z");
+		// WHEN
+		int numberReturned = inputReaderUtil.readSelection();
+
+		// THEN
+		assertThat(numberReturned).isEqualTo(-1);
+	}
+
+	@Test
 	public void readVehicleRegistrationNumberMustReturntheRegistrationNumberEntered() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("ABCDE");

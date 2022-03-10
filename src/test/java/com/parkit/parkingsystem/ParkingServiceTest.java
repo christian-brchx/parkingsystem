@@ -1,15 +1,19 @@
 package com.parkit.parkingsystem;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.withinPercentage;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,22 +44,28 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processIncomingVehicleWithRecuringUSer() {
+	public void processIncomingVehicleMustCallCountPreviousTicketAndSaveTheCounter() {
 		try {
 			// GIVEN
+			final ArgumentCaptor<Ticket> ticketCaptor = ArgumentCaptor.forClass(Ticket.class);
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+			// Select a type of car (1)
 			when(inputReaderUtil.readSelection()).thenReturn(1);
 			when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
-			when(ticketDAO.countPreviousTicketsOfVehicleRegNumber(anyString())).thenReturn(1);
+			// we assume here that there are 5 previous tickets for this vehicle in the
+			// ticket table
+			when(ticketDAO.countPreviousTicketsOfVehicleRegNumber(anyString())).thenReturn(5);
 
 			// WHEN
 			parkingService.processIncomingVehicle();
 
 			// THEN
-			verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
-			verify(inputReaderUtil, Mockito.times(1)).readSelection();
-			verify(parkingSpotDAO, Mockito.times(1)).getNextAvailableSlot(any(ParkingType.class));
-			verify(ticketDAO, Mockito.times(1)).countPreviousTicketsOfVehicleRegNumber("ABCDEF");
+			// saveTicket method must be called once.
+			verify(ticketDAO, Mockito.times(1)).saveTicket(ticketCaptor.capture());
+			final List<Ticket> tickets = ticketCaptor.getAllValues();
+			// only one call, so we get the first element (the ticket) of the list
+			// we check if the saved ticket contains the right countpreviousticket (5 here)
+			assertThat(tickets.get(0).getCountPreviousTickets()).isEqualTo(5);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("processIncomingVehicleWithRecuringUSer : Failed to set up test mock objects");
@@ -63,9 +73,9 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processExitingVehicleTest() {
-		// GIVEN
+	public void processExitingVehicleMustSetTheParkingSpotAvailable() {
 		try {
+			// GIVEN
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 			Ticket ticket = new Ticket();
@@ -75,18 +85,57 @@ public class ParkingServiceTest {
 			ticket.setCountPreviousTickets(0);
 			when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
 			when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-
 			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+
+			// WHEN
+			parkingService.processExitingVehicle();
+
+			// THEN
+			// check the parkingspot if available and update DB is done
+			assertThat(ticket.getParkingSpot().isAvailable()).isEqualTo(true);
+			verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("processExitingVehicleTest : Failed to set up test mock objects");
 		}
 
-		// WHEN
-		parkingService.processExitingVehicle();
+	}
 
-		// THEN
-		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+	@Test
+	public void processExitingVehicleMustCalculatetheRightPriceForCurrentUSer() {
+		// GIVEN
+		try {
+			final ArgumentCaptor<Ticket> ticketCaptor = ArgumentCaptor.forClass(Ticket.class);
+			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+			Ticket ticket = new Ticket();
+			// one hour of park
+			ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+			ticket.setParkingSpot(parkingSpot);
+			ticket.setVehicleRegNumber("ABCDEF");
+			ticket.setCountPreviousTickets(5);
+			when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
+			when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
+
+			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+
+			// WHEN
+			parkingService.processExitingVehicle();
+
+			// THEN
+			// updateTicket method must be called once.
+			verify(ticketDAO, Mockito.times(1)).updateTicket(ticketCaptor.capture());
+			final List<Ticket> tickets = ticketCaptor.getAllValues();
+			// only one call, so we get the first element (the ticket) of the list
+			// we check if the saved ticket contains the right price (1 h * 1,5 * 95%)
+			assertThat(tickets.get(0).getPrice()).isCloseTo(1.425, withinPercentage(0.01));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("processExitingVehicleTest : Failed to set up test mock objects");
+		}
+
 	}
 
 }

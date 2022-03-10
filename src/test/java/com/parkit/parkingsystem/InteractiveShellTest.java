@@ -37,7 +37,6 @@ public class InteractiveShellTest {
 			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
-			verify(inputReaderUtil, Mockito.times(2)).readSelection();
 			verify(parkingService, Mockito.times(1)).processIncomingVehicle();
 			verify(parkingService, Mockito.times(0)).processExitingVehicle();
 		} catch (Exception e) {
@@ -56,7 +55,6 @@ public class InteractiveShellTest {
 			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
-			verify(inputReaderUtil, Mockito.times(2)).readSelection();
 			verify(parkingService, Mockito.times(1)).processExitingVehicle();
 			verify(parkingService, Mockito.times(0)).processIncomingVehicle();
 		} catch (Exception e) {
@@ -76,7 +74,6 @@ public class InteractiveShellTest {
 			InteractiveShell.loadInterface(inputReaderUtil, parkingService);
 
 			// THEN
-			verify(inputReaderUtil, Mockito.times(1)).readSelection();
 			verify(parkingService, Mockito.times(0)).processIncomingVehicle();
 			verify(parkingService, Mockito.times(0)).processExitingVehicle();
 		} catch (Exception e) {

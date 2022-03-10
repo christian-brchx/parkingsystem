@@ -5,7 +5,7 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-	private static double calculateFareRules(double duration, double rate, Ticket ticket) {
+	private double calculateFareRules(double duration, double rate, Ticket ticket) {
 		double price = 0;
 		// fee only if duration >= 30 minutes (1/2 hour),
 		if (duration >= 0.5) {
@@ -14,7 +14,7 @@ public class FareCalculatorService {
 		return price;
 	}
 
-	private static double calculateRateRules(Ticket ticket, double rate) {
+	private double calculateRateRules(Ticket ticket, double rate) {
 		// 5% discount for RecurrentUser
 		if (ticket.ofRecurrentUser()) {
 			return rate * 0.95;

@@ -1,4 +1,5 @@
 /* Setting up PROD DB */
+drop database if exists prod;
 create database prod;
 use prod;
 
@@ -15,6 +16,7 @@ create table ticket(
  PRICE double,
  IN_TIME DATETIME NOT NULL,
  OUT_TIME DATETIME,
+ COUNT_PREVIOUS_TICKETS int NOT NULL,
  FOREIGN KEY (PARKING_NUMBER)
  REFERENCES parking(PARKING_NUMBER));
 
@@ -26,6 +28,7 @@ insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(5,true,'BIKE');
 commit;
 
 /* Setting up TEST DB */
+drop database if exists test;
 create database test;
 use test;
 
@@ -42,6 +45,7 @@ create table ticket(
  PRICE double,
  IN_TIME DATETIME NOT NULL,
  OUT_TIME DATETIME,
+ COUNT_PREVIOUS_TICKETS int NOT NULL,
  FOREIGN KEY (PARKING_NUMBER)
  REFERENCES parking(PARKING_NUMBER));
 
