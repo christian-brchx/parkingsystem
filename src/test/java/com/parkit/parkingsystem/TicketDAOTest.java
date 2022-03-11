@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
@@ -33,8 +34,6 @@ public class TicketDAOTest {
 	static PreparedStatement ps;
 	@Mock
 	static ResultSet rs;
-	@Mock
-	static ParkingSpot parkingSpot;
 
 	TicketDAO ticketDAO;
 
@@ -49,6 +48,7 @@ public class TicketDAOTest {
 		Date inTime = new Date();
 		Ticket ticket = new Ticket();
 		ticket.setInTime(inTime);
+		ParkingSpot parkingSpot = new ParkingSpot(5, ParkingType.CAR, false);
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber("TEST01");
 		try {
@@ -56,14 +56,13 @@ public class TicketDAOTest {
 			when(con.prepareStatement(anyString())).thenReturn(ps);
 			when(dataBaseConfig.getConnection()).thenReturn(con);
 			ticketDAO.dataBaseConfig = dataBaseConfig;
-
-			when(parkingSpot.getId()).thenReturn(1);
-
 			// WHEN
 			ticketDAO.saveTicket(ticket);
 
 			// THEN
-			// La sauvegarde doit cibler TEST01 avec la bonne heure d'entrée
+			// La sauvegarde doit cibler TEST01 avec la bonne heure d'entrée et pour le bon
+			// parking
+			verify(ps, Mockito.times(1)).setInt(1, 5);
 			verify(ps, Mockito.times(1)).setString(2, "TEST01");
 			verify(ps, Mockito.times(1)).setTimestamp(4, new Timestamp(inTime.getTime()));
 

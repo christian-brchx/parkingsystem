@@ -22,8 +22,7 @@ public class ParkingSpotDAO {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		int result = -1;
-		boolean availableSlot = true;
+		int result = 0;
 		try {
 			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
@@ -31,13 +30,9 @@ public class ParkingSpotDAO {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				result = rs.getInt(1);
-			} else {
-				availableSlot = false;
 			}
 		} catch (SQLException ex) {
-			if (availableSlot) {
-				logger.error("Error fetching next available slot", ex);
-			}
+			logger.error("Error fetching next available slot", ex);
 		} catch (ClassNotFoundException ex) {
 			logger.error("Error getConnection Exception = ", ex);
 		} finally {

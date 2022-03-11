@@ -76,7 +76,9 @@ public class ParkingServiceTest {
 	public void processExitingVehicleMustSetTheParkingSpotAvailable() {
 		try {
 			// GIVEN
+			final ArgumentCaptor<ParkingSpot> parkingSpotCaptor = ArgumentCaptor.forClass(ParkingSpot.class);
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+			// ParkingSpot #1 for CAR
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 			Ticket ticket = new Ticket();
 			ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
@@ -91,9 +93,12 @@ public class ParkingServiceTest {
 			parkingService.processExitingVehicle();
 
 			// THEN
-			// check the parkingspot if available and update DB is done
-			assertThat(ticket.getParkingSpot().isAvailable()).isEqualTo(true);
-			verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+			// check the parkingspot #1 for CAR is set to available
+			verify(parkingSpotDAO, Mockito.times(1)).updateParking(parkingSpotCaptor.capture());
+			final List<ParkingSpot> parkings = parkingSpotCaptor.getAllValues();
+			assertThat(parkings.get(0).getId()).isEqualTo(1);
+			assertThat(parkings.get(0).getParkingType()).isEqualTo(ParkingType.CAR);
+			assertThat(parkings.get(0).isAvailable()).isEqualTo(true);
 
 		} catch (Exception e) {
 			e.printStackTrace();

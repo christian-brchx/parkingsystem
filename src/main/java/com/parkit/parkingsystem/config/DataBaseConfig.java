@@ -17,7 +17,9 @@ public class DataBaseConfig {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		return DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/prod", "usertest", "User_test");
+				"jdbc:mysql://localhost:3306/prod", new UserDataBaseConfig().getName(),
+				new UserDataBaseConfig().getPsw());
+		// "jdbc:mysql://localhost:3306/prod", "usertest", "User_test");
 // A activer si problème de date
 //        return DriverManager.getConnection(
 //               "jdbc:mysql://localhost:3306/prod?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC",

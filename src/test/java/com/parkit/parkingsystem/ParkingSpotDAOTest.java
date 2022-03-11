@@ -69,33 +69,6 @@ public class ParkingSpotDAOTest {
 	}
 
 	@Test
-	public void getNextAvailableSlotMustReturnMoinsUnIfNoFreeCarSpot() {
-		try {
-			// GIVEN
-			// no available parkingspot
-			when(rs.next()).thenReturn(false);
-			when(ps.executeQuery()).thenReturn(rs);
-			when(con.prepareStatement(anyString())).thenReturn(ps);
-			when(dataBaseConfig.getConnection()).thenReturn(con);
-			parkingSpotDAO.dataBaseConfig = dataBaseConfig;
-
-			// WHEN
-			int result = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
-
-			// THEN
-			// check if search for car'spot
-			verify(ps, Mockito.times(1)).setString(1, "CAR");
-			// must return -1 when no available parkingspot
-			assertThat(result).isEqualTo(-1);
-
-		} catch (
-
-		Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
 	public void updateParkingMustExecuteTheRequestWithRightsArguments() {
 		try {
 			// GIVEN

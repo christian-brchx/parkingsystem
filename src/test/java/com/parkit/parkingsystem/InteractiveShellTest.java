@@ -46,7 +46,7 @@ public class InteractiveShellTest {
 	}
 
 	@Test
-	public void mustCallprocessIncomingVehicleWhenUserChooseExitingVehicle() {
+	public void mustCallprocessExitingVehicleWhenUserChooseExitingVehicle() {
 		try {
 			// GIVEN
 			when(inputReaderUtil.readSelection()).thenReturn(2, 3);

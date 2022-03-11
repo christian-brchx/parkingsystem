@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.config.UserDataBaseConfig;
 
 public class DataBaseTestConfig extends DataBaseConfig {
 
@@ -19,7 +20,8 @@ public class DataBaseTestConfig extends DataBaseConfig {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		return DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/test", "usertest", "User_test");
+				"jdbc:mysql://localhost:3306/test", new UserDataBaseConfig().getName(),
+				new UserDataBaseConfig().getPsw());
 		// A activer si problème de date
 		// return DriverManager.getConnection(
 		// "jdbc:mysql://localhost:3306/test?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC",

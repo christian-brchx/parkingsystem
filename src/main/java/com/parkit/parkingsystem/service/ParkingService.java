@@ -77,6 +77,7 @@ public class ParkingService {
 			if (parkingNumber > 0) {
 				parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);
 			} else {
+				System.out.println("Sorry but parking slots for your " + parkingType.toString() + " might be full !");
 				throw new Exception("Error fetching parking number from DB. Parking slots might be full");
 			}
 		} catch (IllegalArgumentException ie) {
