@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -60,8 +61,8 @@ public class TicketDAOTest {
 			ticketDAO.saveTicket(ticket);
 
 			// THEN
-			// La sauvegarde doit cibler TEST01 avec la bonne heure d'entrée et pour le bon
-			// parking
+			// Search for "TEST01" ticket with the right inTime and the right parking number
+			// (5)
 			verify(ps, Mockito.times(1)).setInt(1, 5);
 			verify(ps, Mockito.times(1)).setString(2, "TEST01");
 			verify(ps, Mockito.times(1)).setTimestamp(4, new Timestamp(inTime.getTime()));
@@ -90,9 +91,30 @@ public class TicketDAOTest {
 			Ticket ticket = ticketDAO.getTicket("TEST01");
 
 			// THEN
-			// La recherche doit cibler TEST01 et retourner TEST01
+			// Search for TEST01 must return "TEST01"
 			verify(ps, Mockito.times(1)).setString(1, "TEST01");
 			assertThat(ticket.getVehicleRegNumber()).isEqualTo("TEST01");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	public void countPreviousTicketsOfVehicleRegNumberMustCatchSQLExceptionAndReturnZero() {
+		// GIVEN
+		try {
+			when(con.prepareStatement(anyString())).thenThrow(new SQLException());
+			when(dataBaseConfig.getConnection()).thenReturn(con);
+			ticketDAO.dataBaseConfig = dataBaseConfig;
+
+			// WHEN
+			int countPreviousTicket = ticketDAO.countPreviousTicketsOfVehicleRegNumber("TEST01");
+
+			// THEN
+			// in case of Exception, must return 0 previousTicket
+			assertThat(countPreviousTicket).isEqualTo(0);
 
 		} catch (Exception e) {
 			e.printStackTrace();

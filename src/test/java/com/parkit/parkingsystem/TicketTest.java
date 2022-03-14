@@ -21,7 +21,7 @@ public class TicketTest {
 	}
 
 	@Test
-	public void GetParkingSpotMustReturnTheParkingSpotSetWithSetParkingSpot() {
+	public void GetParkingSpotMustReturnTheParkingSpotCreatedWithSetParkingSpot() {
 		// GIVEN
 
 		// WHEN
@@ -32,6 +32,25 @@ public class TicketTest {
 		assertThat(parkingSpotCheck.getId()).isEqualTo(1);
 		assertThat(parkingSpotCheck.getParkingType()).isEqualTo(ParkingType.BIKE);
 		assertThat(parkingSpotCheck.isAvailable()).isEqualTo(false);
+	}
+
+	@Test
+	public void GetParkingSpotMustReturnTheParkingSpotUpdatedWithSetParkingSpot() {
+		// GIVEN
+		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+		ParkingSpot parkingSpot = ticket.getParkingSpot();
+		parkingSpot.setParkingType(ParkingType.CAR);
+		parkingSpot.setId(2);
+		parkingSpot.setAvailable(true);
+
+		// WHEN
+		ticket.setParkingSpot(parkingSpot);
+
+		// THEN
+		ParkingSpot parkingSpotCheck = ticket.getParkingSpot();
+		assertThat(parkingSpotCheck.getId()).isEqualTo(2);
+		assertThat(parkingSpotCheck.getParkingType()).isEqualTo(ParkingType.CAR);
+		assertThat(parkingSpotCheck.isAvailable()).isEqualTo(true);
 	}
 
 	@Test

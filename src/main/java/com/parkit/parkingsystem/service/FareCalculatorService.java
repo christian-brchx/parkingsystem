@@ -33,12 +33,12 @@ public class FareCalculatorService {
 
 		// int inHour = ticket.getInTime().getHours();
 		// int outHour = ticket.getOutTime().getHours();
-		long inHour = ticket.getInTime().getTime();
-		long outHour = ticket.getOutTime().getTime();
+		long inTime = ticket.getInTime().getTime();
+		long outTime = ticket.getOutTime().getTime();
 		// TODO: Some tests are failing here. Need to check if this logic is correct
 		// calcul de la durée en ms et conversion en h
 		// utilisation d'un double pour conserver les décimales
-		double duration = (double) (outHour - inHour) / 1000 / 60 / 60;
+		double duration = (double) (outTime - inTime) / 1000 / 60 / 60;
 
 		switch (ticket.getParkingSpot().getParkingType()) {
 		case CAR: {

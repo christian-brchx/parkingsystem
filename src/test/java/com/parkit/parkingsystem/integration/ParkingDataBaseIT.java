@@ -64,14 +64,27 @@ public class ParkingDataBaseIT {
 		// with availability
 
 		// THEN
-		boolean available = true;
 		// try to get the ticket for the VehicleRegNumber
 		Ticket ticket = ticketDAO.getTicket("ABCDEF");
+
+		// Get the status of the parking saved in the DB
+		boolean available = getAvailableStatusParkingFromDB(ticket);
+
+		// A ticket must be found for the VehicleRegNumber
+		assertThat(ticket.getVehicleRegNumber()).isEqualTo("ABCDEF");
+		// parking must be unaivalable
+		assertThat(available).isEqualTo(false);
+
+	}
+
+	private boolean getAvailableStatusParkingFromDB(Ticket ticket) {
+		boolean available = true;
+
 		Connection connection = null;
 		try {
 			connection = dataBaseTestConfig.getConnection();
 
-			// get parking status to check if available
+			// read parking status in the DB
 			ResultSet rs = connection
 					.prepareStatement(
 							"select AVAILABLE from parking where PARKING_NUMBER=" + ticket.getParkingSpot().getId())
@@ -88,11 +101,7 @@ public class ParkingDataBaseIT {
 			dataBaseTestConfig.closeConnection(connection);
 		}
 
-		// A ticket must be found for the VehicleRegNumber
-		assertThat(ticket.getVehicleRegNumber()).isEqualTo("ABCDEF");
-		// parking must be unaivalable
-		assertThat(available).isEqualTo(false);
-
+		return available;
 	}
 
 	@Test
@@ -114,12 +123,13 @@ public class ParkingDataBaseIT {
 		Ticket ticket = ticketDAO.getTicket("ABCDEF");
 		Double checkFare = ticket.getPrice();
 
+		// the outTime must be filled by processExitingVehicle (not null)
+		assertThat(ticket.getOutTime()).isNotNull();
+
 		FareCalculatorService fareCalculatorService = new FareCalculatorService();
 
 		fareCalculatorService.calculateFare(ticket);
 
-		// the outTime must be filled by processExitingVehicle (not null)
-		assertThat(ticket.getOutTime()).isNotNull();
 		// The results of calculated fare must be equals
 		assertThat(ticket.getPrice()).isEqualTo(checkFare);
 
