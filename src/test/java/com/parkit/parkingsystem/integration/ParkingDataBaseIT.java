@@ -67,14 +67,14 @@ public class ParkingDataBaseIT {
 		// try to get the ticket for the VehicleRegNumber
 		Ticket ticket = ticketDAO.getTicket("ABCDEF");
 
-		// Get the status of the parking saved in the DB
-		boolean available = getAvailableStatusParkingFromDB(ticket);
-
 		// A ticket must be found for the VehicleRegNumber
 		assertThat(ticket.getVehicleRegNumber()).isEqualTo("ABCDEF");
+
+		// Get the status of the parking selected and updated in the DB
+		boolean available = getAvailableStatusParkingFromDB(ticket);
+
 		// parking must be unaivalable
 		assertThat(available).isEqualTo(false);
-
 	}
 
 	private boolean getAvailableStatusParkingFromDB(Ticket ticket) {
@@ -118,21 +118,20 @@ public class ParkingDataBaseIT {
 		// the database
 
 		// THEN
-		// try to get the ticket for the VehicleRegNumber and save the fare calculated
-		// by processExistingVehicle
+		// try to get the ticket for the VehicleRegNumber
 		Ticket ticket = ticketDAO.getTicket("ABCDEF");
-		Double checkFare = ticket.getPrice();
 
 		// the outTime must be filled by processExitingVehicle (not null)
 		assertThat(ticket.getOutTime()).isNotNull();
 
+		// Save the fare calculated by processExistingVehicle and stored in the DB
+		Double checkFare = ticket.getPrice();
+		// Recalculate the fare
 		FareCalculatorService fareCalculatorService = new FareCalculatorService();
-
 		fareCalculatorService.calculateFare(ticket);
 
 		// The results of calculated fare must be equals
 		assertThat(ticket.getPrice()).isEqualTo(checkFare);
-
 	}
 
 }

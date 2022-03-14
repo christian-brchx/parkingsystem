@@ -44,7 +44,7 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processIncomingVehicleMustCallCountPreviousTicketAndSaveTheCounter() {
+	public void processIncomingVehicleMustSaveCountPreviousTicketInTheDB() {
 		try {
 			// GIVEN
 			final ArgumentCaptor<Ticket> ticketCaptor = ArgumentCaptor.forClass(Ticket.class);
@@ -65,7 +65,9 @@ public class ParkingServiceTest {
 			final List<Ticket> tickets = ticketCaptor.getAllValues();
 			// only one call, so we get the first element (the ticket) of the list
 			// we check if the saved ticket contains the right countpreviousticket (5 here)
+			// and if it's a ticket ofRecurrentUser.
 			assertThat(tickets.get(0).getCountPreviousTickets()).isEqualTo(5);
+			assertThat(tickets.get(0).ofRecurrentUser()).isEqualTo(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("processIncomingVehicleWithRecuringUSer : Failed to set up test mock objects");
@@ -108,7 +110,7 @@ public class ParkingServiceTest {
 	}
 
 	@Test
-	public void processExitingVehicleMustCalculatetheRightPriceForCurrentUSer() {
+	public void processExitingVehicleMustCalculateFareWithFivePercentDiscountForRecurrentUSer() {
 		// GIVEN
 		try {
 			final ArgumentCaptor<Ticket> ticketCaptor = ArgumentCaptor.forClass(Ticket.class);
@@ -140,7 +142,6 @@ public class ParkingServiceTest {
 			e.printStackTrace();
 			throw new RuntimeException("processExitingVehicleTest : Failed to set up test mock objects");
 		}
-
 	}
 
 }

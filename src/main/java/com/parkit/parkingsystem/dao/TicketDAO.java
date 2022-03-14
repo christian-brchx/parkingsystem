@@ -127,7 +127,6 @@ public class TicketDAO {
 			if (rs.next()) {
 				count = rs.getInt(1);
 			}
-			rs.close();
 		} catch (SQLException ex) {
 			logger.error("Error counting ticket of vehicleRegNumber : ", vehicleRegNumber, " Exception = ", ex);
 		} catch (ClassNotFoundException ex) {
