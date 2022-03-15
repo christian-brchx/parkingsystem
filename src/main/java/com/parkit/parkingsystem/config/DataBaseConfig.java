@@ -12,13 +12,15 @@ import org.apache.logging.log4j.Logger;
 public class DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
+	private static final String FILE_OF_USERDBCONFIG = "src/main/resources/userdbconfig.txt";
 
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
+		UserDataBaseConfig userDataBaseConfig = new UserDataBaseConfig(FILE_OF_USERDBCONFIG);
 		return DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/prod", new UserDataBaseConfig().getName(),
-				new UserDataBaseConfig().getPsw());
+				"jdbc:mysql://localhost:3306/prod", userDataBaseConfig.getName(),
+				userDataBaseConfig.getPsw());
 		// "jdbc:mysql://localhost:3306/prod", "usertest", "User_test");
 // A activer si problème de date
 //        return DriverManager.getConnection(

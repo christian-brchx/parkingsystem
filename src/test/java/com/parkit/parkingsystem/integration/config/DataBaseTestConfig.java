@@ -15,13 +15,15 @@ import com.parkit.parkingsystem.config.UserDataBaseConfig;
 public class DataBaseTestConfig extends DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseTestConfig");
+	private static final String FILE_OF_USERDBCONFIG = "src/main/resources/userdbconfig.txt";
 
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
+		UserDataBaseConfig userDataBaseConfig = new UserDataBaseConfig(FILE_OF_USERDBCONFIG);
 		return DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/test", new UserDataBaseConfig().getName(),
-				new UserDataBaseConfig().getPsw());
+				"jdbc:mysql://localhost:3306/test", userDataBaseConfig.getName(),
+				userDataBaseConfig.getPsw());
 		// A activer si problème de date
 		// return DriverManager.getConnection(
 		// "jdbc:mysql://localhost:3306/test?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC",

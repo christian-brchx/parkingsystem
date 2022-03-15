@@ -109,7 +109,7 @@
 					</execution>
 					<execution>
 						<id>jacoco-report</id>
-						<phase>integration-test</phase>
+						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>

@@ -213,4 +213,16 @@ public class FareCalculatorServiceTest {
 		assertThat(ticket.getPrice()).isCloseTo(25 * Fare.CAR_RATE_PER_HOUR, withinPercentage(0.001));
 	}
 
+	@Test
+	public void calculateFareBikeWithOutTimeNullMustThrowAnException() {
+		Date inTime = new Date();
+		Date outTime = null;
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+
+		ticket.setInTime(inTime);
+		ticket.setOutTime(outTime);
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setCountPreviousTickets(0);
+		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
 }

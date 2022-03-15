@@ -21,7 +21,7 @@ public class TicketTest {
 	}
 
 	@Test
-	public void GetParkingSpotMustReturnTheParkingSpotCreatedWithSetParkingSpot() {
+	public void getParkingSpotMustReturnTheParkingSpotCreatedWithSetParkingSpot() {
 		// GIVEN
 
 		// WHEN
@@ -35,7 +35,7 @@ public class TicketTest {
 	}
 
 	@Test
-	public void GetParkingSpotMustReturnTheParkingSpotUpdatedWithSetParkingSpot() {
+	public void getParkingSpotMustReturnTheParkingSpotUpdatedWithSetParkingSpot() {
 		// GIVEN
 		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
 		ParkingSpot parkingSpot = ticket.getParkingSpot();
@@ -54,7 +54,7 @@ public class TicketTest {
 	}
 
 	@Test
-	public void GetInTimeMustReturnTheInTimeSetWithSetInTime() {
+	public void getInTimeMustReturnTheInTimeSetWithSetInTime() {
 		// GIVEN
 		Date inTime = new Date();
 
@@ -67,7 +67,7 @@ public class TicketTest {
 	}
 
 	@Test
-	public void GetOutTimeMustReturnTheOutTimeSetWithSetOutTime() {
+	public void getOutTimeMustReturnTheOutTimeSetWithSetOutTime() {
 		// GIVEN
 		Date outTime = new Date();
 

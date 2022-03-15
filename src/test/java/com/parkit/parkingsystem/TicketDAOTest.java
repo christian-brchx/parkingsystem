@@ -102,6 +102,36 @@ public class TicketDAOTest {
 	}
 
 	@Test
+	public void updateTicketMustExecuteSqlQueryWithRightArgumentsAndReturnTrue() {
+		// GIVEN
+		Date outTime = new Date();
+		Ticket ticket = new Ticket();
+		ticket.setOutTime(outTime);
+		ticket.setPrice(4);
+		ticket.setId(4);
+		try {
+			when(ps.execute()).thenReturn(true);
+			when(con.prepareStatement(anyString())).thenReturn(ps);
+			when(dataBaseConfig.getConnection()).thenReturn(con);
+			ticketDAO.dataBaseConfig = dataBaseConfig;
+
+			// WHEN
+			boolean ret = ticketDAO.updateTicket(ticket);
+
+			// THEN
+			// Update the ticket which ID is 4, with right price and right outTime
+			verify(ps, Mockito.times(1)).setDouble(1, 4);
+			verify(ps, Mockito.times(1)).setTimestamp(2, new Timestamp(outTime.getTime()));
+			verify(ps, Mockito.times(1)).setInt(3, 4);
+			assertThat(ret).isEqualTo(true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
 	public void countPreviousTicketsOfVehicleRegNumberMustCatchSQLExceptionAndReturnZero() {
 		// GIVEN
 		try {
@@ -115,6 +145,31 @@ public class TicketDAOTest {
 			// THEN
 			// in case of Exception, must return 0 previousTicket
 			assertThat(countPreviousTicket).isEqualTo(0);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	public void countPreviousTicketsOfVehicleRegNumberMustExecuteSqlQueryWithRightArgumentsAndReturnTheCount() {
+		// GIVEN
+		try {
+			when(rs.next()).thenReturn(true);
+			when(rs.getInt(1)).thenReturn(5);
+			when(ps.executeQuery()).thenReturn(rs);
+			when(con.prepareStatement(anyString())).thenReturn(ps);
+			when(dataBaseConfig.getConnection()).thenReturn(con);
+			ticketDAO.dataBaseConfig = dataBaseConfig;
+
+			// WHEN
+			int countPreviousTicket = ticketDAO.countPreviousTicketsOfVehicleRegNumber("TEST01");
+
+			// THEN
+			// Search for TEST01 must return "TEST01"
+			verify(ps, Mockito.times(1)).setString(1, "TEST01");
+			assertThat(countPreviousTicket).isEqualTo(5);
 
 		} catch (Exception e) {
 			e.printStackTrace();

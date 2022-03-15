@@ -26,7 +26,7 @@ public class InputReaderUtilTest {
 	}
 
 	@Test
-	public void ReadSelectionMustReturntheNumberEntered() {
+	public void readSelectionMustReturntheNumberEntered() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("2");
 		// WHEN
@@ -38,7 +38,7 @@ public class InputReaderUtilTest {
 	}
 
 	@Test
-	public void ReadSelectionMustCatchInvalidEntry() {
+	public void readSelectionMustCatchInvalidEntry() {
 		// GIVEN
 		when(scanUtil.nextLine()).thenReturn("z");
 		// WHEN
