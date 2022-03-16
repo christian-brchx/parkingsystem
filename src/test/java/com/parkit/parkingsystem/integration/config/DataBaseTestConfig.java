@@ -15,7 +15,7 @@ import com.parkit.parkingsystem.config.UserDataBaseConfig;
 public class DataBaseTestConfig extends DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseTestConfig");
-	private static final String FILE_OF_USERDBCONFIG = "src/main/resources/userdbconfig.txt";
+	private static final String FILE_OF_USERDBCONFIG = "src/test/resources/userdbconfig.txt";
 
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		logger.info("Create DB connection");

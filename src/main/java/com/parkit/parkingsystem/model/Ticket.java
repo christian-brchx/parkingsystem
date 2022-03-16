@@ -9,7 +9,7 @@ public class Ticket {
 	private double price = 0;
 	private Date inTime = null;
 	private Date outTime = null;
-	private int countPreviousTickets;
+	private int countPreviousTickets = 0;
 
 	public int getId() {
 		return id;
